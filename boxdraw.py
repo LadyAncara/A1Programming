@@ -1,12 +1,10 @@
 from enum import Enum
 
 cap = Enum, ['TOP', 'BOTTOM', 'MIDDLE', 'SINGLE']
-
 boxb = ''
 
 
-def drawbox(boxcap: cap, x: int, y: int, cont: str, *div):
-    previous = []
+def drawbox(boxcap: cap, prev, x: int, y: int, cont: str, *div):
     # This code is kinda a nightmare but what its doing is generating a top section, a mid section and a mid section with thext that will be displayed at the top line
     boxend = ''.join(('┏', ''.join(map(lambda i: i * x, '━')), '┓'))
     boxtxt = ''.join((f'┃{cont}', ''.join(map(lambda i: i * (x - len(cont)), ' ')), '┃'))
@@ -21,10 +19,12 @@ def drawbox(boxcap: cap, x: int, y: int, cont: str, *div):
 
     def printtop(boxx: str):
         boxx = boxx.replace('┏', '┣').replace('┓', '┫')
-        for k in range(len(previous[0]) - 2):
+        for k in range(len(prev[0]) - 2):
             k += 1
-            if previous[1][k] == '┃':
+            if prev[1][k] == '┃' and boxmid[k] == '┃':
                 boxx = boxx[:k] + "╋" + boxx[k + 1:]
+            elif prev[1][k] == '┃':
+                    boxx = boxx[:k] + "┻" + boxx[k + 1:]
 
 
         print(boxx)
@@ -38,7 +38,8 @@ def drawbox(boxcap: cap, x: int, y: int, cont: str, *div):
             else:
                 print(boxmid)
 
-    previous = [boxend, boxmid]
+
+
 
     # Dont need to generate a bottom section, edit the top depending on case
     match boxcap:
@@ -56,3 +57,6 @@ def drawbox(boxcap: cap, x: int, y: int, cont: str, *div):
             printtop(boxend)
             printmid()
             print(boxend.replace('┏', '┗').replace('┓', '┛').replace('┳', '┻'))
+
+    return [boxend, boxmid]
+
